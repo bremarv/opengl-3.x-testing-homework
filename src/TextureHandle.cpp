@@ -1,8 +1,10 @@
 #include <assert.h>
 #include <stdexcept>
 #include <SDL_image.h>
+#include <sstream>
 #include <siut/simd/Vec3f.hpp>
 #include "TextureHandle.h"
+
 
 using siut::simd::Vec3f;
 TextureHandle::TextureHandle(GLuint tex) : m_tex(tex)
@@ -25,6 +27,13 @@ GLuint TextureHandle::getTex() const
 TextureHandle *TextureHandle::createTexture(std::string filename)
 {
 	SDL_Surface *texture = IMG_Load(filename.c_str());
+	if(0 == texture)
+	{
+	    std::stringstream out;
+	    out << __FILE__ << ": unable to load texture "
+		<< filename;
+	    throw std::runtime_error(out.str());
+	}
 		
 	// Generate OpenGL texture
 	GLuint texName;
