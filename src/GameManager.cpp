@@ -42,74 +42,74 @@ using siut::simd::rotationMatrix4f;
 
 GLuint createCubeMap()
 {
-	GLfloat cols[24] = {1.f, 0.f, 0.f, 1.f,
-						1.f, 1.f, 0.f, 1.f,
-						1.f, 0.f, 1.f, 1.f,
-						0.f, 1.f, 0.f, 1.f,
-						0.f, 1.f, 1.f, 1.f,
-						0.f, 0.f, 1.f, 1.f};
+    GLfloat cols[24] = {1.f, 0.f, 0.f, 1.f,
+			1.f, 1.f, 0.f, 1.f,
+			1.f, 0.f, 1.f, 1.f,
+			0.f, 1.f, 0.f, 1.f,
+			0.f, 1.f, 1.f, 1.f,
+			0.f, 0.f, 1.f, 1.f};
 
-	GLuint tex;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
     ASSERT_GL;
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     ASSERT_GL;
-	for (unsigned int face = 0; face < 6; face++) {
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA,
-			1, 1, 0, GL_RGBA, GL_FLOAT, &cols[face*4]);
-	}
+    for (unsigned int face = 0; face < 6; face++) {
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA,
+		     1, 1, 0, GL_RGBA, GL_FLOAT, &cols[face*4]);
+    }
     ASSERT_GL;
-	return tex;
+    return tex;
 }
 
 void GameManager::CreateCubeMapFrameBuffer(int width, int height)
 {
-	// depth cube map
-	GLuint depth_tex;
-	glGenTextures(1, &depth_tex);
+    // depth cube map
+    GLuint depth_tex;
+    glGenTextures(1, &depth_tex);
 	
-	glGenTextures(1, &depth_tex);
-	m_depthCubemap_tex.reset(new TextureHandle(depth_tex));
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_depthCubemap_tex->getTex());
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	for (int face = 0; face < 6; face++) {
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_DEPTH_COMPONENT24,
-			width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	}
+    glGenTextures(1, &depth_tex);
+    m_depthCubemap_tex.reset(new TextureHandle(depth_tex));
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_depthCubemap_tex->getTex());
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    for (int face = 0; face < 6; face++) {
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_DEPTH_COMPONENT24,
+		     width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    }
 
-	// color cube map
-	GLuint cubeMap;
-	glGenTextures(1, &cubeMap);
-	m_renderToCubemap_tex.reset(new TextureHandle(cubeMap));
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_renderToCubemap_tex->getTex());
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	for (int face = 0; face < 6; face++) {
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA,
-			width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-	}
+    // color cube map
+    GLuint cubeMap;
+    glGenTextures(1, &cubeMap);
+    m_renderToCubemap_tex.reset(new TextureHandle(cubeMap));
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_renderToCubemap_tex->getTex());
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    for (int face = 0; face < 6; face++) {
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA,
+		     width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    }
 
-	// framebuffer object
-	glGenFramebuffers(1, &m_cubemap_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_cubemap_fbo);
-	glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubemap_tex->getTex(), 0);
-	glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderToCubemap_tex->getTex(), 0);
+    // framebuffer object
+    glGenFramebuffers(1, &m_cubemap_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_cubemap_fbo);
+    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthCubemap_tex->getTex(), 0);
+    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderToCubemap_tex->getTex(), 0);
 
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	ASSERT_FBO;
+    ASSERT_FBO;
 }
 
 
@@ -141,37 +141,39 @@ GameManager::init()
     glGetError(); // glewInit finner ikke extension stringen
     // men setter funksjonspekere for core funksjoner
     ASSERT_GL;
-	// Needed for geometry shader
-	assert(GLEW_EXT_geometry_shader4);
+    // Needed for geometry shader
+    assert(GLEW_EXT_geometry_shader4);
 
     // create VAOs
     m_geo_outer_cube = StandardGeometry::factory( StandardGeometry::INVERTED_CUBE );
     m_geo_cube = Cube::factory(  );
 //	m_geo_cube = IndexedTriStrip::createCylinder(20, 40);
-	m_geo_snake = Snake::factory();
+    m_geo_snake = Snake::factory();
     m_geo_light = StandardGeometry::factory( StandardGeometry::PYRAMID );
 
     ASSERT_GL;
-	// Load Textures
-	m_diffuse_tex.reset(TextureHandle::createTexture("textures/Heightfield.png"));
-	m_bump_tex.reset(TextureHandle::createNormalMapFromHeightField("textures/Heightfield2.png"));
+    // Load Textures
+    m_diffuse_tex.reset(TextureHandle::createTexture("textures/Heightfield.png"));
+    m_bump_tex.reset(TextureHandle::createNormalMapFromHeightField("textures/Heightfield2.png"));
     ASSERT_GL;
-	glActiveTexture(GL_TEXTURE0+ENVIRONMENT_MAP_TEXTURE_UNIT);
-	m_cubemap_tex.reset(new TextureHandle(createCubeMap()));
-	glActiveTexture(GL_TEXTURE0+DIFFUSE_MAP_TEXTURE_UNIT);
+    glActiveTexture(GL_TEXTURE0+ENVIRONMENT_MAP_TEXTURE_UNIT);
+    m_cubemap_tex.reset(new TextureHandle(createCubeMap()));
+    glActiveTexture(GL_TEXTURE0+DIFFUSE_MAP_TEXTURE_UNIT);
     ASSERT_GL;
 
     // create shaders
     m_phong_shader = StandardShaderProgram::factory( StandardShaderProgram::PHONG_WITH_SHADOW );
     m_light_shader = StandardShaderProgram::factory( StandardShaderProgram::LIGHT_SHADER );
     m_shadowcast_shader = StandardShaderProgram::factory( StandardShaderProgram::SHADOW_CAST );
-	m_skinning_shader = SkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
-	{
-		BumpShader *tex_shader = BumpShader::factory(StandardShaderProgram::PHONG_SHADER);
-		tex_shader->setBumpMapTexture(m_bump_tex);
-		m_textured_shader = tex_shader;
-	}
-  	m_cubemap_shader = CubeMapShader::factory(StandardShaderProgram::PHONG_SHADER);
+    m_skinning_shader = SkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
+    m_skinned_shadowcast_shader =
+	SkinningShader::factory( StandardShaderProgram::SHADOW_CAST );
+    {
+	BumpShader *tex_shader = BumpShader::factory(StandardShaderProgram::PHONG_SHADER);
+	tex_shader->setBumpMapTexture(m_bump_tex);
+	m_textured_shader = tex_shader;
+    }
+    m_cubemap_shader = CubeMapShader::factory(StandardShaderProgram::PHONG_SHADER);
     ASSERT_GL;
 
     // create objects
@@ -197,12 +199,12 @@ GameManager::init()
         m_boxes.push_back( s );
     }
 
-	for(size_t i=0; i<1;i++) {
-		SkinningShape *s = new SkinningShape( m_geo_snake );
+    for(size_t i=0; i<1;i++) {
+	SkinningShape *s = new SkinningShape( m_geo_snake );
         s->setColor( Vec4f( i/30.0f, 1.0f-i/30.0f, 0.0f, 1.0f ) );
         s->setScale( 1.2f /*0.1f*/ );
-		m_snakes.push_back( s );
-	}
+	m_snakes.push_back( s );
+    }
 
     // Set up render passes
     //
@@ -214,23 +216,23 @@ GameManager::init()
     m_onscreen_pass.addRenderItem( m_outer_box, m_phong_shader );
 //    m_shadow_pass.addRenderItem( m_outer_box, m_shadowcast_shader );
 
-	m_onscreen_pass.addRenderItem( m_light, m_light_shader );
+    m_onscreen_pass.addRenderItem( m_light, m_light_shader );
     for(size_t i=0; i<m_boxes.size(); i++) {
 //        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
 //		m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-		m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
+	m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
         m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
 //        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-		m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
-		m_cubemap_pass.addRenderItem( m_snakes[i], m_cubemap_gen_shader );
-        //m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
+	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
+	m_cubemap_pass.addRenderItem( m_snakes[i], m_cubemap_gen_shader );
+        m_shadow_pass.addRenderItem( m_snakes[i], m_skinned_shadowcast_shader );
     }
 
 
-	// Set up shadow map FBO
+    // Set up shadow map FBO
     glGenFramebuffers( 1, &m_shadow_fbo );
     glBindFramebuffer( GL_FRAMEBUFFER, m_shadow_fbo );
     glFramebufferTexture2D( GL_FRAMEBUFFER,
@@ -241,12 +243,12 @@ GameManager::init()
     glDrawBuffer( GL_NONE );
     ASSERT_FBO;
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-	glPrimitiveRestartIndex(std::numeric_limits<GLuint>::max());
-	glEnable(GL_PRIMITIVE_RESTART);
+    glPrimitiveRestartIndex(std::numeric_limits<GLuint>::max());
+    glEnable(GL_PRIMITIVE_RESTART);
 
     m_start_ticks = glutGet(GLUT_ELAPSED_TIME);
-	m_prev_fps_ticks = m_start_ticks;
-	m_frames = 0;	
+    m_prev_fps_ticks = m_start_ticks;
+    m_frames = 0;	
 
 }
 
@@ -273,22 +275,22 @@ GameManager::animateFrame()
         m_boxes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.07f*tt ) *
                                     quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
                                     quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
-		m_boxes[i]->setLocalPosition( Vec3f( -0.5f, -0.5f, -0.5f ) );
-		m_boxes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
+	m_boxes[i]->setLocalPosition( Vec3f( -0.5f, -0.5f, -0.5f ) );
+	m_boxes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
         //m_boxes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.01f ));
-	}
+    }
 
-	for(size_t i=0; i<m_snakes.size(); i++) {
+    for(size_t i=0; i<m_snakes.size(); i++) {
         float tt = static_cast<float>(t+(0.2*i+2));
         //m_boxes[i]->setPosition( Vec3f( 0.5*cos(1.3*tt), 0.5*sin(1.6*tt), 0.5*cos(1.5*tt) ) );
         m_snakes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.07f*tt ) *
-                                    quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
-                                    quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
-		//m_snakes[i]->setLocalPosition( Vec3f( -0.5f, -0.5f, -0.5f ) );
-		m_snakes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
-		std::vector<siut::simd::Mat4f> &matrs=m_snakes[i]->getboneMatrices();
-		m_geo_snake->createBoneMatrices(0.5f, matrs);
-	}
+				     quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
+				     quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
+	//m_snakes[i]->setLocalPosition( Vec3f( -0.5f, -0.5f, -0.5f ) );
+	m_snakes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
+	std::vector<siut::simd::Mat4f> &matrs=m_snakes[i]->getboneMatrices();
+	m_geo_snake->createBoneMatrices(0.5f, matrs);
+    }
 
     // update bounding boxes
     m_camera->setViewVolume( m_onscreen_pass.getViewerSpaceBoundingBox( m_camera->getObjectFromWorldMatrix() ) );
@@ -320,10 +322,10 @@ GameManager::renderFrame()
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glActiveTexture(GL_TEXTURE0+ENVIRONMENT_MAP_TEXTURE_UNIT);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, m_renderToCubemap_tex->getTex());
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap_tex->getTex());
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glActiveTexture(GL_TEXTURE0+ENVIRONMENT_MAP_TEXTURE_UNIT);
+    //glBindTexture(GL_TEXTURE_CUBE_MAP, m_renderToCubemap_tex->getTex());
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap_tex->getTex());
     m_onscreen_pass.render( m_camera, m_light );
     glEnable( GL_CULL_FACE );
 
@@ -332,29 +334,29 @@ GameManager::renderFrame()
 void
 GameManager::display()
 {
-	m_frames++;
+    m_frames++;
+    {
+	long ticks = glutGet(GLUT_ELAPSED_TIME);
+	if (ticks - m_prev_fps_ticks >= 5000)
 	{
-		long ticks = glutGet(GLUT_ELAPSED_TIME);
-		if (ticks - m_prev_fps_ticks >= 5000)
-		{
-			float fps = m_frames / ((ticks-m_prev_fps_ticks)/1000.f);
-			std::stringstream caption;
-			caption << "PG611 Framework @" << fps << "fps"; 
-			glutSetWindowTitle(caption.str().c_str());
-			m_prev_fps_ticks = ticks;
-			m_frames = 0;
-		}
+	    float fps = m_frames / ((ticks-m_prev_fps_ticks)/1000.f);
+	    std::stringstream caption;
+	    caption << "PG611 Framework @" << fps << "fps"; 
+	    glutSetWindowTitle(caption.str().c_str());
+	    m_prev_fps_ticks = ticks;
+	    m_frames = 0;
 	}
+    }
     animateFrame();
     renderFrame();
 }
 
 void GameManager::quit()
 {
-	glutLeaveMainLoop();
+    glutLeaveMainLoop();
 }
 
 void GameManager::recomputeNormals()
 {
-	m_geo_snake->recomputeNormals();
+    m_geo_snake->recomputeNormals();
 }

@@ -164,7 +164,15 @@ SkinningShader::setUp( Object*  shape,
 	StandardShaderProgram::setUp(shape, camera, light);
 	SkinningShape *sp = dynamic_cast<SkinningShape *>(shape);
 	assert(sp);
-	
+	std::vector<siut::simd::Mat4f> bonematrices = sp->getboneMatrices();
+
+	// only got space for 4 bones, so dont overstep that
+	glUniformMatrix4fv(
+	    m_boneMatrices_loc,
+	    (bonematrices.size() > 4 ? 4 : bonematrices.size()),
+	    GL_FALSE, bonematrices[0].c_ptr() );
+	    
+	    
 // TODO set ben matrisene
 }
 
