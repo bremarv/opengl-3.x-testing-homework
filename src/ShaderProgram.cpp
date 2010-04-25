@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <GlTools.h>
 #include "constants.h"
+#include <iostream>
+#include <fstream>
 
 #include <siut/simd/MatOperations.hpp>
 #include <siut/simd/MatTransforms.hpp>
@@ -423,4 +425,32 @@ std::string StandardShaderProgram::getPhongWithShadowFsSrc() const
 std::string StandardShaderProgram::getShadowcastFsSrc() 
 {
 	return shadowcast_fs_src;
+}
+
+std::string StandardShaderProgram::readshaderfromfile(const std::string filename) const
+{
+    int lenght;
+    char *buffer;
+
+    std::ifstream ifs;
+    ifs.open(filename.c_str(), std::ios::in);
+    if(ifs.fail())
+    {
+	return NULL;//temp, throw error here??
+    }
+
+    ifs.seekg(0, std::ios::end);
+    lenght = ifs.tellg();
+    ifs.seekg(0, std::ios::beg);
+
+    buffer = new char[lenght];
+
+    ifs.read(buffer, lenght);
+    ifs.close();
+
+    std::string returnstring(buffer, lenght);
+
+    delete[] buffer;
+
+    return returnstring;
 }

@@ -217,16 +217,16 @@ GameManager::init()
 //    m_shadow_pass.addRenderItem( m_outer_box, m_shadowcast_shader );
 
     m_onscreen_pass.addRenderItem( m_light, m_light_shader );
-    for(size_t i=0; i<m_boxes.size(); i++) {
-//        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-//		m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-	m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
-        m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
-    }
+//     for(size_t i=0; i<m_boxes.size(); i++) {
+// //        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
+// //		m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
+// 	m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
+//         m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
+//     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
-//        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
+        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
+//	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
 	m_cubemap_pass.addRenderItem( m_snakes[i], m_cubemap_gen_shader );
         m_shadow_pass.addRenderItem( m_snakes[i], m_skinned_shadowcast_shader );
     }

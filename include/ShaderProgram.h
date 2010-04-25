@@ -42,6 +42,7 @@ protected:
 		const std::string &fragmentShader);
 	virtual void bindAttribLocations();
 	virtual void setupUniforms();
+	std::string readshaderfromfile(const std::string filename) const;
 
 	std::string getVanillaVsSrc() const;
     std::string getLightShapeFsSrc() const;
