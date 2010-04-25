@@ -100,7 +100,6 @@ void Cube::init()
 
 
 	std::vector<GLfloat> TNB(6*m_count);
-	std::vector<GLfloat> normals(3 * m_count);
 	int counter = 0;
 	// TODO: Generate TNB frame
 	for(int triangle = 0; triangle < m_count / 3; ++triangle)
@@ -119,8 +118,7 @@ void Cube::init()
 
 	    calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
 			       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
-			       &TNB[triangle * 18], &TNB[triangle * 18 + 3],
-			       &normals[triangle * 9]);
+			       &TNB[triangle * 18], &TNB[triangle * 18 + 3]);
 
 	    // calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
 	    // 		       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
@@ -133,13 +131,11 @@ void Cube::init()
 	    // 		       &normals[triangle * 9 + 6]);	    
 	    calctanbitannormal(&vec1[0], &vec2[0], &vec0[0],
 	    		       &tex1[0], &tex2[0], &tex0[0], &norm1[0],
-	    		       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9],
-	    		       &normals[triangle * 9 + 3]);
+	    		       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9]);
 
 	    calctanbitannormal(&vec2[0], &vec0[0], &vec1[0],
 	    		       &tex2[0], &tex0[0], &tex1[0], &norm2[0],
-	    		       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15],
-	    		       &normals[triangle * 9 + 6]);
+	    		       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15]);
 	    
 
 	    // for( int i = 0; i < 3; ++i)
@@ -221,18 +217,18 @@ void Cube::init()
 	    // }
 	}
 
-	std::cout<<counter<<"\t"<<TNB.size()<<std::endl;
-	for(int i = 0; i < TNB.size(); ++i)
-	{
-	    std::cout << TNB[i] << " ";
-	    if(i % 3 == 2)
-	    {
-		std::cout << std::endl;
-	    }
-	    if(i % 6 == 5)
-		std::cout << std::endl;
+	// std::cout<<counter<<"\t"<<TNB.size()<<std::endl;
+	// for(int i = 0; i < TNB.size(); ++i)
+	// {
+	//     std::cout << TNB[i] << " ";
+	//     if(i % 3 == 2)
+	//     {
+	// 	std::cout << std::endl;
+	//     }
+	//     if(i % 6 == 5)
+	// 	std::cout << std::endl;
 	    
-	}
+	// }
 	    
 
 	glGenBuffers( 1, &m_vbo );
@@ -266,8 +262,8 @@ void Cube::init()
 void
 Cube::calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
 			  GLfloat *tex0, GLfloat *tex1, GLfloat *tex2, GLfloat *norm,
-			GLfloat *tangentsaveloc, GLfloat *bitangentsaveloc,
-			GLfloat *normalsaveloc)
+			GLfloat *tangentsaveloc, GLfloat *bitangentsaveloc/*,
+									    GLfloat *normalsaveloc*/)
 {
     Vec3f v0(vec0);
     Vec3f v1(vec1);
@@ -314,7 +310,7 @@ Cube::calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
 
     memcpy(tangentsaveloc, &tangent[0], sizeof(GLfloat)*3);
     memcpy(bitangentsaveloc, &bitangent[0], sizeof(GLfloat)*3);
-    memcpy(normalsaveloc, &normal[0], sizeof(GLfloat)*3);
+//    memcpy(normalsaveloc, &normal[0], sizeof(GLfloat)*3);
 }
 
 

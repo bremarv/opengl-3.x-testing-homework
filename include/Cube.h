@@ -18,7 +18,7 @@ public:
     calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
 			GLfloat *tex0, GLfloat *tex1, GLfloat *tex2,
 			GLfloat *normal, GLfloat *tangentsaveloc,
-			GLfloat *bitangentsaveloc, GLfloat *normalsaveloc);
+			GLfloat *bitangentsaveloc /*GLfloat *normalsaveloc*/);
 
 protected:
 	Cube() {}; // used by factory
