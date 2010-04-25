@@ -122,15 +122,24 @@ void Cube::init()
 			       &TNB[triangle * 18], &TNB[triangle * 18 + 3],
 			       &normals[triangle * 9]);
 
+	    // calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
+	    // 		       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
+	    // 		       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9],
+	    // 		       &normals[triangle * 9 + 3]);
+
+	    // calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
+	    // 		       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
+	    // 		       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15],
+	    // 		       &normals[triangle * 9 + 6]);	    
 	    calctanbitannormal(&vec1[0], &vec2[0], &vec0[0],
-			       &tex1[0], &tex2[0], &tex0[0], &norm1[0],
-			       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9],
-			       &normals[triangle * 9 + 3]);
+	    		       &tex1[0], &tex2[0], &tex0[0], &norm1[0],
+	    		       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9],
+	    		       &normals[triangle * 9 + 3]);
 
 	    calctanbitannormal(&vec2[0], &vec0[0], &vec1[0],
-			       &tex2[0], &tex0[0], &tex1[0], &norm2[0],
-			       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15],
-			       &normals[triangle * 9 + 6]);
+	    		       &tex2[0], &tex0[0], &tex1[0], &norm2[0],
+	    		       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15],
+	    		       &normals[triangle * 9 + 6]);
 	    
 
 	    // for( int i = 0; i < 3; ++i)
@@ -212,18 +221,18 @@ void Cube::init()
 	    // }
 	}
 
-	// std::cout<<counter<<"\t"<<TNB.size()<<std::endl;
-	// for(int i = 0; i < TNB.size(); ++i)
-	// {
-	//     std::cout << TNB[i] << " ";
-	//     if(i % 3 == 2)
-	//     {
-	// 	std::cout << std::endl;
-	//     }
-	//     if(i % 6 == 5)
-	// 	std::cout << std::endl;
+	std::cout<<counter<<"\t"<<TNB.size()<<std::endl;
+	for(int i = 0; i < TNB.size(); ++i)
+	{
+	    std::cout << TNB[i] << " ";
+	    if(i % 3 == 2)
+	    {
+		std::cout << std::endl;
+	    }
+	    if(i % 6 == 5)
+		std::cout << std::endl;
 	    
-	// }
+	}
 	    
 
 	glGenBuffers( 1, &m_vbo );
@@ -268,22 +277,39 @@ Cube::calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
     Vec2f t1(tex1);
     Vec2f t2(tex2);
 
+    Vec3f normal(norm);
+
     Vec3f p1 = v1 - v0;
     Vec3f p2 = v2 - v0;
     Vec2f uv1 = t1 - t0;
     Vec2f uv2 = t2 - t0;
+
+    float r = 1.f / (uv1.x() * uv2.y() - uv2.x() * uv1.y());
+
+    // Vec3f tangent = (p1 * uv2.y() + p2 *(-uv1.y())) * r;
+    // Vec3f bitangent = (p2 * uv1.x() + p1 *(-uv2.x())) * r;
+
+    // tangent = normalize(tangent - normal * dot(normal, tangent));
+    // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
+    // 	 -1.f : 1.f;
+
+    // bitangent = normalize(handedness * cross(normal, tangent));
     
-    Vec3f tangent = normalize(p1 * uv2.y() - p2 * uv1.y());
-    Vec3f bitangent = normalize(p2 * uv1.x() - p1 * uv2.x());
+    Vec3f tangent = (p1 * uv2.y() + p2 * -uv1.y()) * r;
+    Vec3f bitangent = (p2 * uv1.x() + p1 * -uv2.x()) * r;
 //    Vec3f normal = cross(tangent, bitangent);
-    Vec3f normal(norm);
+//    Vec3f normal(norm);
 
     tangent = tangent - normal * dot(normal, tangent);
-    bitangent = bitangent - normal * dot(normal, bitangent) -
-	tangent * dot(tangent, bitangent);
-    int handedness = (dot(cross(normal, tangent), bitangent) > 0.f) ?
-	-1.f : 1.f;
-    bitangent = normalize(handedness * cross(normal, tangent));
+    bitangent = bitangent - dot(normal, bitangent) * normal -
+	dot(tangent, bitangent) * tangent;
+    // bitangent = bitangent - normal * dot(normal, bitangent) -
+    // 	tangent * dot(tangent, bitangent);
+    // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
+    // 	-1.f : 1.f;
+    // bitangent = normalize(handedness * cross(normal, tangent));
+
+    bitangent = normalize(bitangent);
     tangent = normalize(tangent);
 
     memcpy(tangentsaveloc, &tangent[0], sizeof(GLfloat)*3);
