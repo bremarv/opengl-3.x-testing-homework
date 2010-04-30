@@ -11,6 +11,7 @@
 using std::vector;
 using siut::simd::Vec3f;
 using siut::simd::Mat4f;
+using namespace siut::simd;
 
 
 Snake*
@@ -120,29 +121,18 @@ void Snake::init( )
 void Snake::createBoneMatrices(float angle, std::vector<siut::simd::Mat4f> &matrices)
 {
     static Vec3f yaxis(0, 1, 0);
-    static Mat4f translation = siut::simd::translationMatrixf( Vec3f(0, 0, 0.25) );
-    static Mat4f invtranslation = siut::simd::translationMatrixInversef( Vec3f(0, 0, 0.25) );
-    Mat4f rotationmat = siut::simd::rotationMatrix4f(
-     	siut::simd::quatFromAxisAngleRotation( yaxis, angle ) );
-    Mat4f currentmat = siut::simd::identityMatrixf();
-
+    Mat4f rotationmat = rotationMatrix4f(
+     	quatFromAxisAngleRotation( yaxis, angle ) );
+    Mat4f currentmat = identityMatrixf();
 
     matrices.clear();
 
-    matrices.push_back( rotationmat );
-    matrices.push_back( rotationmat * translation *
-	rotationmat * invtranslation );
-
-    
-    // matrices.push_back( siut::simd::identityMatrixf() );
-    // matrices.push_back( siut::simd::identityMatrixf() );
-    
-    
-    // for(int i = 0; i < 4; ++i)
-    // {
-    // 	currentmat *= translation * rotationmat * invtranslation;
-    // 	matrices.push_back( currentmat );	    
-    // }
-//TODO: implementer funksjonen som lager matrisene assosiert ved hvert ben
-// Roter hvert ledd angle grader rundt y aksen
+    for(int bone = 0; bone < m_startPos.size(); ++bone)
+    {
+	// uses the last matrix created or identity if this is the first
+	matrices.push_back(
+	    (matrices.size() > 0 ? matrices.back() : identityMatrixf()) *
+	    translationMatrixf(m_startPos[bone]) * rotationmat *
+	    translationMatrixInversef(m_startPos[bone]));
+    }
 }

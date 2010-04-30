@@ -1,6 +1,8 @@
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
 
+#include <string>
+
 #define SHADDOW_MAP_TEXTURE_UNIT 0
 #define DIFFUSE_MAP_TEXTURE_UNIT 1
 #define BUMP_MAP_TEXTURE_UNIT 2
@@ -13,5 +15,9 @@
 #define BITANGENT_ATTRIB_LOCATION 4
 #define SKINNINGWEIGHT_ATTRIB_LOCATION 5
 #define SKINNINGINDEX_ATTRIB_LOCATION 6
+
+#ifndef SHADER_PREFIX
+#define SHADER_PREFIX "shaders/"
+#endif
 
 #endif // _CONSTANTS_H_

@@ -427,10 +427,20 @@ std::string StandardShaderProgram::getShadowcastFsSrc()
 	return shadowcast_fs_src;
 }
 
-std::string StandardShaderProgram::readshaderfromfile(const std::string filename) const
+std::string StandardShaderProgram::readshaderfromfile(const std::string in_filename) const
 {
     int lenght;
     char *buffer;
+    string filename;
+    
+    if(in_filename.rfind( SHADER_PREFIX ) == string::npos)
+    {
+	filename = SHADER_PREFIX + in_filename;
+    }
+    else
+    {
+	filename = in_filename;
+    }
 
     std::ifstream ifs;
     ifs.open(filename.c_str(), std::ios::in);

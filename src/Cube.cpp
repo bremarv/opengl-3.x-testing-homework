@@ -298,7 +298,8 @@ Cube::calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
 
     tangent = tangent - normal * dot(normal, tangent);
     bitangent = bitangent - dot(normal, bitangent) * normal -
-	dot(tangent, bitangent) * tangent;
+    	dot(tangent, bitangent) * tangent;
+    
     // bitangent = bitangent - normal * dot(normal, bitangent) -
     // 	tangent * dot(tangent, bitangent);
     // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
