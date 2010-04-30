@@ -1,0 +1,7 @@
+run make in the src folder to compile. the makefile is just so I can compile, so
+everyone probably have to customize it.
+
+EXTERNAL LIBRARIES:
+this code makes use of opengl 3 compatible version of SDL (atm in beta). Also
+uses a Vector/Matrix/Quaternion library developed by Sintef, that my class
+got from our teacher. This should be released under GPL or similar sometime :)
