@@ -173,8 +173,8 @@ GameManager::init()
     ASSERT_GL;
     // Load Textures
     m_diffuse_tex.reset(TextureHandle::createTexture("textures/Heightfield.png"));
-    //m_bump_tex.reset(TextureHandle::createNormalMapFromHeightField("textures/Heightfield2.png"));
-    m_bump_tex.reset(TextureHandle::createTexture("textures/rockwall.tga"));
+    m_bump_tex.reset(TextureHandle::createNormalMapFromHeightField("textures/Heightfield2.png"));
+    // m_bump_tex.reset(TextureHandle::createTexture("textures/rockwall.tga"));
     ASSERT_GL;
     glActiveTexture(GL_TEXTURE0+ENVIRONMENT_MAP_TEXTURE_UNIT);
     m_cubemap_tex.reset(new TextureHandle(createCubeMap()));
@@ -238,17 +238,17 @@ GameManager::init()
 
     m_onscreen_pass.addRenderItem( m_light, m_light_shader );
     for(size_t i=0; i<m_boxes.size(); i++) {
-//        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
+        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
 //		m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
 	// m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
-        // m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
+	m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
 //        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
+//	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
 	// m_cubemap_pass.addRenderItem( m_snakes[i], m_cubemap_gen_shader );
-        m_shadow_pass.addRenderItem( m_snakes[i], m_skinning_shadowcast_shader );
+//        m_shadow_pass.addRenderItem( m_snakes[i], m_skinning_shadowcast_shader );
     }
 
 
