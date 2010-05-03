@@ -3,8 +3,8 @@
 in vec2 in_v_TexCoord;
 in vec3 in_v_Normal;
 in vec3 in_v_Position;
-in vec3 in_v_Tangent;
-in vec3 in_v_Bitangent;
+in vec4 in_v_Tangent;
+/* in vec3 in_v_Bitangent; */
    
 /* out vec3 in_f_Normal; */
 /* out vec3 in_f_Tangent; */
@@ -40,7 +40,8 @@ main()
     in_f_LightTexPosition = lsp;
     in_f_TexCoord = in_v_TexCoord;
     gl_Position = ModelViewProjection * p;
-    mat3 tnbmat = transpose(mat3(in_v_Tangent, in_v_Bitangent, normalize(in_v_Normal)));
+    vec3 bitangent = cross(in_v_Normal, in_v_Tangent.xyz) * in_v_Tangent.w;
+    mat3 tnbmat = transpose(mat3(in_v_Tangent.xyz, bitangent, normalize(in_v_Normal)));
     in_f_lookdir = tnbmat * (ObjSpaceCamPos - in_v_Position);
     in_f_lightdir = tnbmat * (ObjSpaceLightPos - in_v_Position);
 }

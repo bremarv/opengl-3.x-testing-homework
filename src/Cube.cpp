@@ -95,11 +95,11 @@ void Cube::init()
 	glEnableVertexAttribArray( TEXCOORD_ATTRIB_LOCATION );
 	glVertexAttribPointer( NORMAL_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*)(sizeof(GLfloat)*2) );
 	glEnableVertexAttribArray( NORMAL_ATTRIB_LOCATION );
-	glVertexAttribPointer( POSITION_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*)(sizeof(GLfloat)*5) );
+ 	glVertexAttribPointer( POSITION_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (GLvoid*)(sizeof(GLfloat)*5) );
 	glEnableVertexAttribArray( POSITION_ATTRIB_LOCATION );
 
 
-	std::vector<GLfloat> TNB(6*m_count);
+	std::vector<GLfloat> TNB(4*m_count);
 	int counter = 0;
 	// TODO: Generate TNB frame
 	for(int triangle = 0; triangle < m_count / 3; ++triangle)
@@ -116,26 +116,17 @@ void Cube::init()
 	    Vec3f norm1(&cube[triangle * 3 * 8 + 8 + 2]);
 	    Vec3f norm2(&cube[triangle * 3 * 8 + 16 + 2]);
 
-	    calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
-			       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
-			       &TNB[triangle * 18], &TNB[triangle * 18 + 3]);
+	    calctanbitannormal(vec0, vec1, vec2,
+			       tex0, tex1, tex2, norm0,
+			       &TNB[triangle * 12]);
 
-	    // calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
-	    // 		       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
-	    // 		       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9],
-	    // 		       &normals[triangle * 9 + 3]);
+	    calctanbitannormal(vec1, vec2, vec0,
+	    		       tex1, tex2, tex0, norm1,
+	    		       &TNB[triangle * 12 + 4]);
 
-	    // calctanbitannormal(&vec0[0], &vec1[0], &vec2[0],
-	    // 		       &tex0[0], &tex1[0], &tex2[0], &norm0[0],
-	    // 		       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15],
-	    // 		       &normals[triangle * 9 + 6]);	    
-	    calctanbitannormal(&vec1[0], &vec2[0], &vec0[0],
-	    		       &tex1[0], &tex2[0], &tex0[0], &norm1[0],
-	    		       &TNB[triangle * 18 + 6], &TNB[triangle * 18 + 9]);
-
-	    calctanbitannormal(&vec2[0], &vec0[0], &vec1[0],
-	    		       &tex2[0], &tex0[0], &tex1[0], &norm2[0],
-	    		       &TNB[triangle * 18 + 12], &TNB[triangle * 18 + 15]);
+	    calctanbitannormal(vec2, vec0, vec1,
+	    		       tex2, tex0, tex1, norm2,
+	    		       &TNB[triangle * 12 + 8]);
 	    
 
 	    // for( int i = 0; i < 3; ++i)
@@ -235,15 +226,15 @@ void Cube::init()
 	glBindBuffer( GL_ARRAY_BUFFER, m_vbo );
 	ASSERT_GL;
 	glBufferData( GL_ARRAY_BUFFER,
-				  sizeof(GLfloat)*6*m_count,
-				  &TNB[0],
-				  GL_STATIC_DRAW );
-	glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, 
+		      sizeof(GLfloat)*4*m_count,
+		      &TNB[0],
+		      GL_STATIC_DRAW );
+	glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*4, 
 		(GLvoid*)(sizeof(GLfloat)*0) );
 	glEnableVertexAttribArray( TANGENT_ATTRIB_LOCATION );
-	glVertexAttribPointer( BITANGENT_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, 
-		(GLvoid*)(sizeof(GLfloat)*3) );
-	glEnableVertexAttribArray( BITANGENT_ATTRIB_LOCATION );
+	// glVertexAttribPointer( BITANGENT_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, 
+	// 	(GLvoid*)(sizeof(GLfloat)*3) );
+	// glEnableVertexAttribArray( BITANGENT_ATTRIB_LOCATION );
 
 	// glBufferData( GL_ARRAY_BUFFER,
 	// 	      sizeof(GLfloat)*3*m_count,
@@ -259,60 +250,60 @@ void Cube::init()
 	ASSERT_GL;
 }
 
-void
-Cube::calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
-			  GLfloat *tex0, GLfloat *tex1, GLfloat *tex2, GLfloat *norm,
-			GLfloat *tangentsaveloc, GLfloat *bitangentsaveloc/*,
-									    GLfloat *normalsaveloc*/)
-{
-    Vec3f v0(vec0);
-    Vec3f v1(vec1);
-    Vec3f v2(vec2);
+// void
+// Cube::calctanbitannormal( GLfloat *vec0, GLfloat *vec1, GLfloat *vec2,
+// 			  GLfloat *tex0, GLfloat *tex1, GLfloat *tex2, GLfloat *norm,
+// 			GLfloat *tangentsaveloc, GLfloat *bitangentsaveloc/*,
+// 									    GLfloat *normalsaveloc*/)
+// {
+//     Vec3f v0(vec0);
+//     Vec3f v1(vec1);
+//     Vec3f v2(vec2);
 
-    Vec2f t0(tex0);
-    Vec2f t1(tex1);
-    Vec2f t2(tex2);
+//     Vec2f t0(tex0);
+//     Vec2f t1(tex1);
+//     Vec2f t2(tex2);
 
-    Vec3f normal(norm);
+//     Vec3f normal(norm);
 
-    Vec3f p1 = v1 - v0;
-    Vec3f p2 = v2 - v0;
-    Vec2f uv1 = t1 - t0;
-    Vec2f uv2 = t2 - t0;
+//     Vec3f p1 = v1 - v0;
+//     Vec3f p2 = v2 - v0;
+//     Vec2f uv1 = t1 - t0;
+//     Vec2f uv2 = t2 - t0;
 
-    float r = 1.f / (uv1.x() * uv2.y() - uv2.x() * uv1.y());
+//     float r = 1.f / (uv1.x() * uv2.y() - uv2.x() * uv1.y());
 
-    // Vec3f tangent = (p1 * uv2.y() + p2 *(-uv1.y())) * r;
-    // Vec3f bitangent = (p2 * uv1.x() + p1 *(-uv2.x())) * r;
+//     // Vec3f tangent = (p1 * uv2.y() + p2 *(-uv1.y())) * r;
+//     // Vec3f bitangent = (p2 * uv1.x() + p1 *(-uv2.x())) * r;
 
-    // tangent = normalize(tangent - normal * dot(normal, tangent));
-    // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
-    // 	 -1.f : 1.f;
+//     // tangent = normalize(tangent - normal * dot(normal, tangent));
+//     // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
+//     // 	 -1.f : 1.f;
 
-    // bitangent = normalize(handedness * cross(normal, tangent));
+//     // bitangent = normalize(handedness * cross(normal, tangent));
     
-    Vec3f tangent = (p1 * uv2.y() + p2 * -uv1.y()) * r;
-    Vec3f bitangent = (p2 * uv1.x() + p1 * -uv2.x()) * r;
-//    Vec3f normal = cross(tangent, bitangent);
-//    Vec3f normal(norm);
+//     Vec3f tangent = (p1 * uv2.y() + p2 * -uv1.y()) * r;
+//     Vec3f bitangent = (p2 * uv1.x() + p1 * -uv2.x()) * r;
+// //    Vec3f normal = cross(tangent, bitangent);
+// //    Vec3f normal(norm);
 
-    tangent = tangent - normal * dot(normal, tangent);
-    bitangent = bitangent - dot(normal, bitangent) * normal -
-    	dot(tangent, bitangent) * tangent;
+//     tangent = tangent - normal * dot(normal, tangent);
+//     bitangent = bitangent - dot(normal, bitangent) * normal -
+//     	dot(tangent, bitangent) * tangent;
     
-    // bitangent = bitangent - normal * dot(normal, bitangent) -
-    // 	tangent * dot(tangent, bitangent);
-    // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
-    // 	-1.f : 1.f;
-    // bitangent = normalize(handedness * cross(normal, tangent));
+//     // bitangent = bitangent - normal * dot(normal, bitangent) -
+//     // 	tangent * dot(tangent, bitangent);
+//     // int handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
+//     // 	-1.f : 1.f;
+//     // bitangent = normalize(handedness * cross(normal, tangent));
 
-    bitangent = normalize(bitangent);
-    tangent = normalize(tangent);
+//     bitangent = normalize(bitangent);
+//     tangent = normalize(tangent);
 
-    memcpy(tangentsaveloc, &tangent[0], sizeof(GLfloat)*3);
-    memcpy(bitangentsaveloc, &bitangent[0], sizeof(GLfloat)*3);
-//    memcpy(normalsaveloc, &normal[0], sizeof(GLfloat)*3);
-}
+//     memcpy(tangentsaveloc, &tangent[0], sizeof(GLfloat)*3);
+//     memcpy(bitangentsaveloc, &bitangent[0], sizeof(GLfloat)*3);
+// //    memcpy(normalsaveloc, &normal[0], sizeof(GLfloat)*3);
+// }
 
 
 

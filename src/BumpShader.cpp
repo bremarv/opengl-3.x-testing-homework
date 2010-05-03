@@ -168,7 +168,7 @@ void BumpShader::init(const std::string &vs, const std::string &fs)
 {
     StandardShaderProgram::init(vs, fs);
     glBindAttribLocation( m_prog, TANGENT_ATTRIB_LOCATION, "in_v_Tangent" );
-    glBindAttribLocation( m_prog, BITANGENT_ATTRIB_LOCATION, "in_v_Bitangent" );
+    //glBindAttribLocation( m_prog, BITANGENT_ATTRIB_LOCATION, "in_v_Bitangent" );
 
     m_cam_pos_in_objspace_loc =
 	glGetUniformLocation( m_prog, "ObjSpaceCamPos");
