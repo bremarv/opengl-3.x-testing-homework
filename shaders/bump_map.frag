@@ -36,7 +36,7 @@ main()
     vec3 s = normalize(l+v);
     float diff = d*max( 0.1, dot( n, l ) );
     float spec = pow( max( 0.0, dot(s, n)), 20.0);
-    res_Color = diff * color + 
-	spec * vec4(1.0);
-    // res_Color.rgb = bump;
+    res_Color = diff * color +
+    	spec * vec4(1.0);
+    /* res_Color = texture(BumpMap, in_f_TexCoord); */
 };

@@ -99,7 +99,7 @@ void Cube::init()
 	glEnableVertexAttribArray( POSITION_ATTRIB_LOCATION );
 
 
-	std::vector<GLfloat> TNB(4*m_count);
+	std::vector<GLfloat> TNB(7*m_count);
 	int counter = 0;
 	// TODO: Generate TNB frame
 	for(int triangle = 0; triangle < m_count / 3; ++triangle)
@@ -118,16 +118,27 @@ void Cube::init()
 
 	    calctanbitannormal(vec0, vec1, vec2,
 			       tex0, tex1, tex2, norm0,
-			       &TNB[triangle * 12]);
+			       &TNB[triangle * 21],
+			       &TNB[triangle * 21 + 4]);
 
 	    calctanbitannormal(vec1, vec2, vec0,
 	    		       tex1, tex2, tex0, norm1,
-	    		       &TNB[triangle * 12 + 4]);
+	    		       &TNB[triangle * 21 + 7],
+			       &TNB[triangle * 21 + 11]);
 
 	    calctanbitannormal(vec2, vec0, vec1,
 	    		       tex2, tex0, tex1, norm2,
-	    		       &TNB[triangle * 12 + 8]);
-	    
+	    		       &TNB[triangle * 21 + 14],
+			       &TNB[triangle * 21 + 18]);
+	    orthogonolizetnb(
+		&TNB[triangle*21], &TNB[triangle*21+4],
+		&norm0[0], &TNB[triangle*21]);
+	    orthogonolizetnb(
+		&TNB[triangle*21+7], &TNB[triangle*21+11],
+		&norm0[0], &TNB[triangle*21+7]);
+	    orthogonolizetnb(
+		&TNB[triangle*21+14], &TNB[triangle*21+18],
+		&norm0[0], &TNB[triangle*21+14]);
 
 	    // for( int i = 0; i < 3; ++i)
 	    // {
@@ -226,10 +237,10 @@ void Cube::init()
 	glBindBuffer( GL_ARRAY_BUFFER, m_vbo );
 	ASSERT_GL;
 	glBufferData( GL_ARRAY_BUFFER,
-		      sizeof(GLfloat)*4*m_count,
+		      sizeof(GLfloat)*7*m_count,
 		      &TNB[0],
 		      GL_STATIC_DRAW );
-	glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*4, 
+	glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*7, 
 		(GLvoid*)(sizeof(GLfloat)*0) );
 	glEnableVertexAttribArray( TANGENT_ATTRIB_LOCATION );
 	// glVertexAttribPointer( BITANGENT_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, 

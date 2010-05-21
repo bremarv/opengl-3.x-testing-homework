@@ -206,18 +206,18 @@ void IndexedTriStrip::setupTNB()
 //	TODO: lag tangent og bitangent
    
     const GLuint resetindex = std::numeric_limits<GLuint>::max();
-    GLfloat *tangentdata = new GLfloat[m_count * 14];
+    GLfloat *tangentdata = new GLfloat[m_count * 3];
+    GLfloat *bitangentdata = new GLfloat[m_count * 3];
+    GLfloat *tangentsave = new GLfloat[m_count * 4];
     
-    for(int i = 0; i < m_count; ++i)
+    for(int i = 0; i < m_count * 4; ++i)
     {
-	for(int j = 0; j < 8; ++j)
-	{
-	    tangentdata[14 * i + j] = m_data[8 * i + j];	    
-	}
-	for(int j = 8; j < 14; ++j)
-	{
-	    tangentdata[14 * i + j] = 0;
-	}
+	tangentsave[i] = 0;
+    }
+    for(int i = 0; i < m_count * 3; ++i)
+    {
+	tangentdata[i] = 0;
+	bitangentdata[i] = 0;
     }
     
     for(int i=0; i < m_index.size()-2; i++)
@@ -235,72 +235,45 @@ void IndexedTriStrip::setupTNB()
 	Vec2f texc1(&m_data[8 * i1 + 0]);
 	Vec2f texc2(&m_data[8 * i2 + 0]);
 	
+	Vec3f n1(&m_data[8 * i1 + 2]);
+	Vec3f n2(&m_data[8 * i2 + 2]);
+	
 	//now go trough the triangle strip, adding one each round
 	while(i < m_index.size() && m_index[i] != resetindex)
-	{
+	{	    
 	    //move the information one step back
 	    Vec3f vert0 = vert1;
 	    GLuint i0 = i1;
 	    Vec2f texc0 = texc1;
+	    Vec3f n0 = n1;
 	    vert1 = vert2;
 	    i1 = i2;
 	    texc1 = texc2;
+	    n1 = n2;
 	    //and get the next set of info
 	    i2 = m_index[i++];
 	    vert2 = Vec3f(&m_data[8 * i2 + 5]);
 	    texc2 = Vec2f(&m_data[8 * i2 + 0]);
+	    n2 = Vec3f(&m_data[8 * i2 + 2]);
 
-	    float x1 = vert1.x() - vert0.x();
-	    float x2 = vert2.x() - vert0.x();
-	    float y1 = vert1.y() - vert0.y();
-	    float y2 = vert2.y() - vert0.y();
-	    float z1 = vert1.z() - vert0.z();
-	    float z2 = vert2.z() - vert0.z();
+	    calctanbitannormal(
+		vert0, vert1, vert2, texc0, texc1, texc2,
+		n0, &tangentdata[i0*3], &bitangentdata[i0*3]);
+	    calctanbitannormal(
+		vert0, vert1, vert2, texc0, texc1, texc2,
+		n1, &tangentdata[i1*3], &bitangentdata[i1*3]);
+	    calctanbitannormal(
+		vert0, vert1, vert2, texc0, texc1, texc2,
+		n2, &tangentdata[i2*3], &bitangentdata[i2*3]);
 
-	    float s1 = texc1.x() - texc0.x();
-	    float s2 = texc2.x() - texc0.x();
-	    float t1 = texc1.y() - texc0.y();
-	    float t2 = texc2.y() - texc0.y();
-
-	    float r = 1.f / (s1 * t2 - s2 * t1);
-
-	    Vec3f sdir((t2 * x1 - t1 * x2) * r,
-		       (t2 * y1 - t1 * y2) * r,
-		       (t2 * z1 - t1 * z2) * r);
-	    Vec3f tdir((s2 * x1 - s1 * x2) * r,
-		       (s2 * y1 - s1 * y2) * r,
-		       (s2 * z1 - s1 * z2) * r);
-
-	    // add tangent data to the data array
-	    for(int vi = 0; vi < 3; vi++)
-	    {
-		int vert = (vi == 0 ? i0 : (vi == 1 ? i1 : i2));
-		for(int j = 0; j < 3; j++)
-		{
-		    tangentdata[vert * 14 + 8 + j] += sdir[j];
-		    tangentdata[vert * 14 + 11 + j] += tdir[j];
-		}
-	    }
 	}
     }
 
     for(int i = 0; i < m_count; ++i)
     {
-	Vec3f tangent(&tangentdata[i * 14 + 8]);
-	Vec3f bitangent(&tangentdata[i * 14 + 11]);
-	Vec3f normal(&tangentdata[i * 14 + 2]);
-
-	tangent = tangent - normal * dot(normal, tangent);
-	bitangent = bitangent - normal * dot(normal, bitangent) -
-	    tangent * dot(tangent, bitangent);
-	tangent = normalize(tangent);
-	bitangent = normalize(bitangent);
-
-	for(int j = 0; j < 3; ++j)
-	{
-	    tangentdata[i * 14 + 8 + j] = tangent[j];
-	    tangentdata[i * 14 + 11 + j] = bitangent[j];
-	}
+	orthogonolizetnb(
+	    &tangentdata[i*3], &bitangentdata[i*3],
+	    &m_data[i*8+2], &tangentsave[i*4]);
     }
 
     glBindVertexArray(m_vao);
@@ -309,29 +282,13 @@ void IndexedTriStrip::setupTNB()
     assert(m_TNBVbo > 0);
     glBindBuffer( GL_ARRAY_BUFFER, m_TNBVbo);
     glBufferData(GL_ARRAY_BUFFER,
-		 sizeof(GLfloat) * 14 * m_count,
+		 sizeof(GLfloat) * 4 * m_count,
 		 &tangentdata[0],
 		 GL_STATIC_DRAW);
 
-    glVertexAttribPointer( TEXCOORD_ATTRIB_LOCATION, 2, GL_FLOAT, GL_FALSE,
-			   sizeof(GLfloat)*14, (GLvoid*)(sizeof(GLfloat)*0) );
-    glEnableVertexAttribArray( TEXCOORD_ATTRIB_LOCATION );
-    
-    glVertexAttribPointer( NORMAL_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE,
-			   sizeof(GLfloat)*14, (GLvoid*)(sizeof(GLfloat)*2) );
-    glEnableVertexAttribArray( NORMAL_ATTRIB_LOCATION );
-    
-    glVertexAttribPointer( POSITION_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE,
-			   sizeof(GLfloat)*14, (GLvoid*)(sizeof(GLfloat)*5) );
-    glEnableVertexAttribArray( POSITION_ATTRIB_LOCATION );
-    
-    glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE,
-			   sizeof(GLfloat)*14, (GLvoid*)(sizeof(GLfloat)*8) );
+    glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 4, GL_FLOAT, GL_FALSE,
+			   sizeof(GLfloat)*4, (GLvoid*)(sizeof(GLfloat)*0) );
     glEnableVertexAttribArray( TANGENT_ATTRIB_LOCATION );
-    
-    glVertexAttribPointer( BITANGENT_ATTRIB_LOCATION, 3, GL_FLOAT, GL_FALSE,
-			   sizeof(GLfloat)*14, (GLvoid*)(sizeof(GLfloat)*11) );
-
     ASSERT_GL;
 			   
 }

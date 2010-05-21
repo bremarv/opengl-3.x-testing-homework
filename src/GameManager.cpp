@@ -21,6 +21,7 @@
 #include "IndexedTriStrip.h"
 #include "Snake.h"
 #include "constants.h"
+#include "BumpSkinningShader.h"
 
 #include "GlTools.h"
 using std::cerr;
@@ -185,7 +186,8 @@ GameManager::init()
     m_phong_shader = StandardShaderProgram::factory( StandardShaderProgram::PHONG_WITH_SHADOW );
     m_light_shader = StandardShaderProgram::factory( StandardShaderProgram::LIGHT_SHADER );
     m_shadowcast_shader = StandardShaderProgram::factory( StandardShaderProgram::SHADOW_CAST );
-    m_skinning_shader = SkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
+    // m_skinning_shader = SkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
+    m_skinning_shader = BumpSkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
     m_skinning_shadowcast_shader = SkinningShader::factory(
 	StandardShaderProgram::SHADOW_CAST);
     {
@@ -238,17 +240,17 @@ GameManager::init()
 
     m_onscreen_pass.addRenderItem( m_light, m_light_shader );
     for(size_t i=0; i<m_boxes.size(); i++) {
-        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
 //		m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
 	// m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
-	m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
+        // m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );	
+	// m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
-//        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-//	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
 	// m_cubemap_pass.addRenderItem( m_snakes[i], m_cubemap_gen_shader );
-//        m_shadow_pass.addRenderItem( m_snakes[i], m_skinning_shadowcast_shader );
+//        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
+	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
+	// m_shadow_pass.addRenderItem( m_snakes[i], m_skinning_shadowcast_shader );
     }
 
 
