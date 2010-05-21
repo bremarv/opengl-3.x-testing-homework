@@ -31,13 +31,12 @@ void main()
 	vec4(in_v_Position, 1.0);
     norm = norm + in_v_Weights[1] * boneMatrices[in_v_Bones.y] *
 	vec4(in_v_Normal, 0.0);
-    norm.xyz = in_v_Normal;
     
     vec4 lsp = LightTexFromObjectMatrix * position;
     in_f_LightTexPosition = lsp;
     in_f_TexCoord = in_v_TexCoord;
     gl_Position = ModelViewProjection * position;
-    vec3 bitangent = cross(normalize(in_v_Normal), normalize(in_v_Tangent.xyz)) * in_v_Tangent.w;
+    vec3 bitangent = cross(normalize(norm), normalize(in_v_Tangent.xyz)) * in_v_Tangent.w;
     mat3 tnbmat = transpose(mat3(normalize(in_v_Tangent.xyz), normalize(bitangent), normalize(in_v_Normal)));
     in_f_lookdir = tnbmat * (ObjSpaceCamPos - position.xyz);
     in_f_lightdir = tnbmat * (ObjSpaceLightPos - position.xyz);

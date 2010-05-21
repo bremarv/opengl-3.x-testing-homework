@@ -20,7 +20,7 @@ uniform vec3 ObjSpaceCamPos;
     
 void
 main()
-{
+
     vec4 p =  vec4( in_v_Position, 1.0 );
     vec4 lsp = LightTexFromObjectMatrix * p;
     in_f_LightTexPosition = lsp;

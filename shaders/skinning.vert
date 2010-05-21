@@ -25,7 +25,6 @@ main()
     vec4 norm =   in_v_Weights[0] *  boneMatrices[in_v_Bones.x] * vec4(in_v_Normal, 0.0);
     position =  position + in_v_Weights[1] * boneMatrices[in_v_Bones.y] * vec4(in_v_Position, 1.0);
     norm = norm +  in_v_Weights[1] *  boneMatrices[in_v_Bones.y] * vec4(in_v_Normal, 0.0);
-    norm.xyz = in_v_Normal;
     in_f_CamSpaceNormal = ModelViewInverseTranspose * norm.xyz;
     vec4 csp = ModelView * position;
     in_f_CamSpacePosition = (1.0/csp.w)*csp.xyz;
