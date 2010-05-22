@@ -260,10 +260,10 @@ void IndexedTriStrip::setupTNB()
 		vert0, vert1, vert2, texc0, texc1, texc2,
 		n0, &tangentdata[i0*3], &bitangentdata[i0*3]);
 	    calctanbitannormal(
-		vert0, vert1, vert2, texc0, texc1, texc2,
+		vert1, vert2, vert0, texc1, texc2, texc0,
 		n1, &tangentdata[i1*3], &bitangentdata[i1*3]);
 	    calctanbitannormal(
-		vert0, vert1, vert2, texc0, texc1, texc2,
+		vert2, vert0, vert1, texc2, texc0, texc1,
 		n2, &tangentdata[i2*3], &bitangentdata[i2*3]);
 
 	}

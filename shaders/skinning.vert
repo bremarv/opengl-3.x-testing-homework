@@ -32,7 +32,4 @@ main()
     vec4 lsp = LightTexFromObjectMatrix * p;
     in_f_LightTexPosition = lsp;
     gl_Position = ModelViewProjection * p;
-    if (in_v_Bones.x==3)
-	in_f_CamSpaceNormal=vec3(0.0);
-
 }
