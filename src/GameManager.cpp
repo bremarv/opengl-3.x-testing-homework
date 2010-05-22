@@ -248,8 +248,8 @@ GameManager::init()
 
     for(size_t i=0; i<m_snakes.size(); i++) {
 	// m_cubemap_pass.addRenderItem( m_snakes[i], m_cubemap_gen_shader );
-//        m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
+        m_onscreen_pass.addRenderItem( m_snakes[i], m_textured_shader );
+	// m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
 	// m_shadow_pass.addRenderItem( m_snakes[i], m_skinning_shadowcast_shader );
     }
 
