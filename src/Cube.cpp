@@ -117,28 +117,23 @@ void Cube::init()
 	    Vec3f norm2(&cube[triangle * 3 * 8 + 16 + 2]);
 
 	    calctanbitannormal(vec0, vec1, vec2,
-			       tex0, tex1, tex2, norm0,
+			       tex0, tex1, tex2,
 			       &TNB[triangle * 21],
-			       &TNB[triangle * 21 + 4]);
-
-	    calctanbitannormal(vec1, vec2, vec0,
-	    		       tex1, tex2, tex0, norm1,
-	    		       &TNB[triangle * 21 + 7],
-			       &TNB[triangle * 21 + 11]);
-
-	    calctanbitannormal(vec2, vec0, vec1,
-	    		       tex2, tex0, tex1, norm2,
-	    		       &TNB[triangle * 21 + 14],
+			       &TNB[triangle * 21 + 4],
+			       &TNB[triangle * 21 + 7],
+			       &TNB[triangle * 21 + 11],
+			       &TNB[triangle * 21 + 14],
 			       &TNB[triangle * 21 + 18]);
+	    
 	    orthogonolizetnb(
 		&TNB[triangle*21], &TNB[triangle*21+4],
 		&norm0[0], &TNB[triangle*21]);
 	    orthogonolizetnb(
 		&TNB[triangle*21+7], &TNB[triangle*21+11],
-		&norm0[0], &TNB[triangle*21+7]);
+		&norm1[0], &TNB[triangle*21+7]);
 	    orthogonolizetnb(
 		&TNB[triangle*21+14], &TNB[triangle*21+18],
-		&norm0[0], &TNB[triangle*21+14]);
+		&norm2[0], &TNB[triangle*21+14]);
 
 	    // for( int i = 0; i < 3; ++i)
 	    // {

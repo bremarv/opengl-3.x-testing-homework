@@ -229,14 +229,11 @@ void IndexedTriStrip::setupTNB()
 	assert(i2 != resetindex);
 	//theres 8 floats for each vertex, so jump index * 8 to get the right set
 	//position info is from 5 to 7 in each set
-	Vec3f vert1(&m_data[8 * i1 + 5]);
-	Vec3f vert2(&m_data[8 * i2 + 5]);
+	Vec3f vert1(&m_data[8 * (i1) + 5]);
+	Vec3f vert2(&m_data[8 * (i2) + 5]);
 	//and get the texcoords as well
-	Vec2f texc1(&m_data[8 * i1 + 0]);
-	Vec2f texc2(&m_data[8 * i2 + 0]);
-	
-	Vec3f n1(&m_data[8 * i1 + 2]);
-	Vec3f n2(&m_data[8 * i2 + 2]);
+	Vec2f texc1(&m_data[8 * (i1) + 0]);
+	Vec2f texc2(&m_data[8 * (i2) + 0]);
 	
 	//now go trough the triangle strip, adding one each round
 	while(i < m_index.size() && m_index[i] != resetindex)
@@ -245,26 +242,20 @@ void IndexedTriStrip::setupTNB()
 	    Vec3f vert0 = vert1;
 	    GLuint i0 = i1;
 	    Vec2f texc0 = texc1;
-	    Vec3f n0 = n1;
 	    vert1 = vert2;
 	    i1 = i2;
 	    texc1 = texc2;
-	    n1 = n2;
 	    //and get the next set of info
 	    i2 = m_index[i++];
-	    vert2 = Vec3f(&m_data[8 * i2 + 5]);
-	    texc2 = Vec2f(&m_data[8 * i2 + 0]);
-	    n2 = Vec3f(&m_data[8 * i2 + 2]);
+	    vert2 = Vec3f(&m_data[8 * (i2) + 5]);
+	    texc2 = Vec2f(&m_data[8 * (i2) + 0]);
 
 	    calctanbitannormal(
 		vert0, vert1, vert2, texc0, texc1, texc2,
-		n0, &tangentdata[i0*3], &bitangentdata[i0*3]);
-	    calctanbitannormal(
-		vert1, vert2, vert0, texc1, texc2, texc0,
-		n1, &tangentdata[i1*3], &bitangentdata[i1*3]);
-	    calctanbitannormal(
-		vert2, vert0, vert1, texc2, texc0, texc1,
-		n2, &tangentdata[i2*3], &bitangentdata[i2*3]);
+		&tangentdata[(i0)*3], &bitangentdata[(i0)*3],
+		&tangentdata[(i1)*3], &bitangentdata[(i1)*3],
+		&tangentdata[(i2)*3], &bitangentdata[(i2)*3]);
+
 
 	}
     }
@@ -275,6 +266,13 @@ void IndexedTriStrip::setupTNB()
 	    &tangentdata[i*3], &bitangentdata[i*3],
 	    &m_data[i*8+2], &tangentsave[i*4]);
     }
+
+    // for(int i = 0; i < m_count*3; ++i)
+    // {
+    // 	std::cout<<bitangentdata[i]<< "\t";
+    // 	if(i % 3 == 2)
+    // 	    std::cout<<std::endl;
+    // }
 
     glBindVertexArray(m_vao);
 

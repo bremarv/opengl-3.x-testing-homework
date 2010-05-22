@@ -241,7 +241,6 @@ GameManager::init()
     m_onscreen_pass.addRenderItem( m_light, m_light_shader );
     for(size_t i=0; i<m_boxes.size(); i++) {
 //		m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );
-	// m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
         // m_onscreen_pass.addRenderItem( m_boxes[i], m_textured_shader );	
 	// m_shadow_pass.addRenderItem( m_boxes[i], m_shadowcast_shader );
     }

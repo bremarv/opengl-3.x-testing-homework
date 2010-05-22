@@ -223,24 +223,35 @@ void
 Geometry::calctanbitannormal(
     Vec3f &v0, Vec3f &v1, Vec3f &v2,
     Vec2f &t0, Vec2f &t1, Vec2f &t2,
-    Vec3f &normal, GLfloat *tangentsave,
-    GLfloat *bitangentsave
+    GLfloat *ts0, GLfloat *bts0, GLfloat *ts1, GLfloat *bts1,
+    GLfloat *ts2, GLfloat *bts2
     )
 {
     Vec3f p1 = v1 - v0;
     Vec3f p2 = v2 - v0;
     Vec2f uv1 = t1 - t0;
     Vec2f uv2 = t2 - t0;
-
+    
     float r = 1.f / (uv1.x() * uv2.y() - uv2.x() * uv1.y());
+
+    // std::cout<<p2 * uv1.x() *r<<"\t"<<p1 * -uv2.x()*r<<std::endl;
+    // std::cout<<p1 * uv2.y()*r<<"\t"<<p2 * -uv1.y()*r<<std::endl;
+    // std::cout<<std::endl;
+    std::cout<<uv1<<"\t\t"<<uv2<<std::endl;
     
     Vec3f tangent = (p1 * uv2.y() + p2 * -uv1.y()) * r;
     Vec3f bitangent = (p2 * uv1.x() + p1 * -uv2.x()) * r;
 
+
+
     for(int i = 0; i < 3; ++i)
     {
-	tangentsave[i] += tangent[i];
-	bitangentsave[i] += bitangent[i];
+	ts0[i] += tangent[i];
+	ts1[i] += tangent[i];
+	ts2[i] += tangent[i];
+	bts0[i] += bitangent[i];
+	bts1[i] += bitangent[i];
+	bts2[i] += bitangent[i];
     }
 }
 
@@ -248,12 +259,17 @@ void
 Geometry::orthogonolizetnb(
     Vec3f &tangent, Vec3f &bitangent,
     Vec3f &normal, GLfloat *saveloc)
-{    
+{
+    tangent = normalize(tangent);
+    bitangent = normalize(bitangent);
     Vec3f orthtangent = normalize(tangent - normal * dot(normal, tangent));
-    GLfloat handedness = (dot(cross(normal, tangent), bitangent) < 1.f) ?
+    GLfloat handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
 	-1.f : 1.f;
 
-    memcpy(saveloc, &orthtangent[0], sizeof(GLfloat)*3);
+    // std::cout<<tangent<<"\t"<<bitangent<<std::endl;
+    
+    for(int i = 0; i < 3; ++i)
+	saveloc[i] = orthtangent[i];
     saveloc[3] = handedness;
 }
 

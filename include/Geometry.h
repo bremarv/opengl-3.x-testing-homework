@@ -13,8 +13,8 @@ public:
 	static void calctanbitannormal(
 	    siut::simd::Vec3f &v0, siut::simd::Vec3f &v1, siut::simd::Vec3f &v2,
 	    siut::simd::Vec2f &t0, siut::simd::Vec2f &t1, siut::simd::Vec2f &t2,
-	    siut::simd::Vec3f &normal, GLfloat *tangentsave,
-	    GLfloat *bitangentsave);
+	    GLfloat *ts0, GLfloat *bts0, GLfloat *ts1, GLfloat *bts1,
+	    GLfloat *ts2, GLfloat *bts2);
 	static void orthogonolizetnb(
 	    siut::simd::Vec3f &tangent, siut::simd::Vec3f &bitangent,
 	    siut::simd::Vec3f &normal, GLfloat *saveloc);
