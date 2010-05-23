@@ -133,8 +133,8 @@ void IndexedTriStrip::init(const vector<GLfloat> &data, const vector<GLuint> &in
     glEnableVertexAttribArray( POSITION_ATTRIB_LOCATION );
     m_bbox = siut::simd::BBox3f( Vec3f(0.0f), Vec3f(1.0f, 0.0f, 1.0f) );
     ASSERT_GL;
-
     setupTNB();
+    ASSERT_GL;
 }
 
 void IndexedTriStrip::bindVao()
@@ -204,8 +204,7 @@ void IndexedTriStrip::recomputeNormals()
 void IndexedTriStrip::setupTNB()
 {
 //	TODO: lag tangent og bitangent
-   
-    const GLuint resetindex = std::numeric_limits<GLuint>::max();
+        const GLuint resetindex = std::numeric_limits<GLuint>::max();
     GLfloat *tangentdata = new GLfloat[m_count * 3];
     GLfloat *bitangentdata = new GLfloat[m_count * 3];
     GLfloat *tangentsave = new GLfloat[m_count * 4];
@@ -220,7 +219,7 @@ void IndexedTriStrip::setupTNB()
 	bitangentdata[i] = 0;
     }
     
-    for(int i=0; i < m_index.size()-2; i++)
+    for(size_t i=0; i < m_index.size()-2; i++)
     {
 	//get the two first vertecies to make up for triangle strip starting with the 3 first
 	GLuint i1 = m_index[i++];
@@ -267,13 +266,6 @@ void IndexedTriStrip::setupTNB()
 	    &m_data[i*8+2], &tangentsave[i*4]);
     }
 
-    // for(int i = 0; i < m_count*3; ++i)
-    // {
-    // 	std::cout<<bitangentdata[i]<< "\t";
-    // 	if(i % 3 == 2)
-    // 	    std::cout<<std::endl;
-    // }
-
     glBindVertexArray(m_vao);
 
     glGenBuffers(1, &m_TNBVbo);
@@ -284,9 +276,8 @@ void IndexedTriStrip::setupTNB()
 		 &tangentdata[0],
 		 GL_STATIC_DRAW);
 
+    glEnableVertexAttribArray( TANGENT_ATTRIB_LOCATION );
     glVertexAttribPointer( TANGENT_ATTRIB_LOCATION, 4, GL_FLOAT, GL_FALSE,
 			   sizeof(GLfloat)*4, (GLvoid*)(sizeof(GLfloat)*0) );
-    glEnableVertexAttribArray( TANGENT_ATTRIB_LOCATION );
     ASSERT_GL;
-			   
 }

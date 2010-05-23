@@ -234,16 +234,12 @@ Geometry::calctanbitannormal(
     
     float r = 1.f / (uv1.x() * uv2.y() - uv2.x() * uv1.y());
 
-    // std::cout<<p2 * uv1.x() *r<<"\t"<<p1 * -uv2.x()*r<<std::endl;
-    // std::cout<<p1 * uv2.y()*r<<"\t"<<p2 * -uv1.y()*r<<std::endl;
-    // std::cout<<std::endl;
-    std::cout<<uv1<<"\t\t"<<uv2<<std::endl;
-    
     Vec3f tangent = (p1 * uv2.y() + p2 * -uv1.y()) * r;
     Vec3f bitangent = (p2 * uv1.x() + p1 * -uv2.x()) * r;
 
-
-
+    // tangent = normalize(tangent);
+    // bitangent = normalize(bitangent);
+    
     for(int i = 0; i < 3; ++i)
     {
 	ts0[i] += tangent[i];
@@ -260,8 +256,8 @@ Geometry::orthogonolizetnb(
     Vec3f &tangent, Vec3f &bitangent,
     Vec3f &normal, GLfloat *saveloc)
 {
-    tangent = normalize(tangent);
-    bitangent = normalize(bitangent);
+    // tangent = normalize(tangent);
+    // bitangent = normalize(bitangent);
     Vec3f orthtangent = normalize(tangent - normal * dot(normal, tangent));
     GLfloat handedness = (dot(cross(normal, tangent), bitangent) < 0.f) ?
 	-1.f : 1.f;
@@ -283,4 +279,3 @@ void Geometry::orthogonolizetnb(
 
     orthogonolizetnb(t, b, n, saveloc);
 }
-

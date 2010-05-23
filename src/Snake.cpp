@@ -120,7 +120,9 @@ void Snake::init( )
 
 void Snake::createBoneMatrices(float angle, std::vector<siut::simd::Mat4f> &matrices)
 {
-    static Vec3f yaxis(0, 1, 0);
+//TODO: implementer funksjonen som lager matrisene assosiert ved hvert ben
+// Roter hvert ledd angle grader rundt y aksen
+        static Vec3f yaxis(0, 1, 0);
     Mat4f rotationmat = rotationMatrix4f(
      	quatFromAxisAngleRotation( yaxis, angle ) );
     Mat4f currentmat = identityMatrixf();

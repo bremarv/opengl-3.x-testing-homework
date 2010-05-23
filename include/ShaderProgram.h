@@ -21,7 +21,7 @@ public:
         LIGHT_SHADER,
         PHONG_SHADER,
         PHONG_WITH_SHADOW,
-	SHADOW_CAST
+       SHADOW_CAST
     };
 
     static
@@ -64,7 +64,6 @@ protected:
     GLint   m_lighttex_from_camspace_loc;
     GLint   m_lighttex_from_objspace_loc;
     GLint   m_shadowmap_sampler_loc;
-    GLint   m_boneMatrices_loc;
 
 private:
 	StandardShaderProgram(const StandardShaderProgram &o) {}

@@ -34,9 +34,6 @@ using std::string;
 // 	"    vec4 norm =   in_v_Weights[0] *  boneMatrices[in_v_Bones.x] * vec4(in_v_Normal, 0.0);\n"
 // 	"    position =  position + in_v_Weights[1] * boneMatrices[in_v_Bones.y] * vec4(in_v_Position, 1.0);\n"
 // 	"    norm = norm +  in_v_Weights[1] *  boneMatrices[in_v_Bones.y] * vec4(in_v_Normal, 0.0);\n"
-// 	"//position = in_v_Weights[0] * vec4(in_v_Position, 1.0);\n"
-// 	"//position = vec4(in_v_Position, 1.0);\n"
-// 	"norm.xyz = in_v_Normal\n;"
 // 	"    in_f_CamSpaceNormal = ModelViewInverseTranspose * norm.xyz;\n"
 // 	"    vec4 csp = ModelView * position;\n"
 // 	"    in_f_CamSpacePosition = (1.0/csp.w)*csp.xyz;\n"
@@ -44,10 +41,6 @@ using std::string;
 //         "    vec4 lsp = LightTexFromObjectMatrix * p;\n"
 //         "    in_f_LightTexPosition = lsp;\n"
 //         "    gl_Position = ModelViewProjection * p;\n"
-// 		"//if (in_v_Weights.x<0 || in_v_Weights.x>1.0)\n"
-// 		"if (in_v_Bones.x==3)\n"
-// 		"  in_f_CamSpaceNormal=vec3(0.0);\n"
-
 //         "}\n";
 
 static std::string phong_fs_src =
@@ -77,7 +70,6 @@ static std::string phong_fs_src =
     "    float spec = pow( max( 0.0, dot(n, r)), 20.0);\n"
     "    res_Color = diff * diffuseColor + \n"
     "                spec * vec4(1.0);\n"
-    " res_Color.xyz = ObjSpaceLightPos;\n"
     "}\n";
 
 
@@ -95,20 +87,15 @@ void SkinningShader::init()
     switch( m_type ) {
 
     case LIGHT_SHADER:
-//        vs = vanilla_vs_src;
-//        fs = lightshape_fs_src;
 	throw std::runtime_error( __FILE__ );
         break;
 
     case PHONG_SHADER:
-	vs = readshaderfromfile("skinning.vert");;
-//		vs = StandardShaderProgram::getVanillaVsSrc();
+	vs = readshaderfromfile("skinning.vert");
 	fs = StandardShaderProgram::getPhongFsSrc();		
         break;
 
     case PHONG_WITH_SHADOW:
-	//      vs = vanilla_vs_src;
-//        fs = phong_with_shadow_fs_src;
 	throw std::runtime_error( __FILE__ );
         break;
 
@@ -171,9 +158,6 @@ SkinningShader::setUp( Object*  shape,
 	m_boneMatrices_loc,
 	(bonematrices.size() > 4 ? 4 : bonematrices.size()),
 	GL_FALSE, bonematrices[0].c_ptr() );
-	    
-	    
-// TODO set ben matrisene
 }
 
 

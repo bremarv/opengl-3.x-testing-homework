@@ -6,36 +6,35 @@
 #include "TextureHandle.h"
 
 class BumpShader :
-public StandardShaderProgram
+	public StandardShaderProgram
 {
-  public:
-    ~BumpShader(void);
+public:
+	~BumpShader(void);
     static
-	BumpShader*
-	factory( ShaderType type );
-    void setBumpMapTexture(boost::shared_ptr<TextureHandle> tex);
+    BumpShader*
+    factory( ShaderType type );
+	void setBumpMapTexture(boost::shared_ptr<TextureHandle> tex);
 
     virtual void
-	setUp( Object*  shape,
-	       Viewer*  viewer,
-	       Light*   light );
+    setUp( Object*  shape,
+           Viewer*  viewer,
+           Light*   light );
 
 
-  protected:
-    BumpShader(ShaderType type);
-    BumpShader() {} // do not use
+protected:
+	BumpShader(ShaderType type);
+	BumpShader() {} // do not use
 
-    void init();
-    void init(const std::string &vertexShader, const std::string &fragmentShader);
+	void init();
+	void init(const std::string &vertexShader, const std::string &fragmentShader);
 
-    GLint m_bumpmap_sampler_loc;
-    GLint m_lightpos_in_objspace_loc;
-    GLint m_cam_pos_in_objspace_loc;
-    GLint m_relief_depth_loc;
-    boost::shared_ptr<TextureHandle> m_bump_tex;
+    GLint   m_bumpmap_sampler_loc;
+	GLint   m_lightpos_in_objspace_loc;
+	GLint   m_cam_pos_in_objspace_loc;
+	boost::shared_ptr<TextureHandle> m_bump_tex;
 
-  private:
-    BumpShader(const BumpShader &o) {}
+private:
+	BumpShader(const BumpShader &o) {}
 
 };
 

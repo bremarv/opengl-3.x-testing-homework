@@ -35,7 +35,7 @@ RenderList::getViewerSpaceBoundingBox( const Mat4f& world_to_viewer )
             // make sure that the viewer bounding box is large enough to contain them.
             for( size_t i=0; i<8; i++ ) {
                 Vec3f corner_in_viewspace =
-		    asEuclidean( obj_to_view * asHomogeneous( corner( bbox, i) ) );
+                        asEuclidean( obj_to_view * asHomogeneous( corner( bbox, i) ) );
                 include( viewspace_bbox, corner_in_viewspace );
             }
         }
@@ -59,15 +59,15 @@ RenderList::render( Viewer* viewer, Light* light )
 
     for( vector<RenderItem>::iterator it = m_items.begin(); it != m_items.end(); ++it )
     {
-	ASSERT_GL;
+		    ASSERT_GL;
 
         HasGeometry* hg = dynamic_cast<HasGeometry*>( it->m_shape );
         if( hg != NULL ) {
             it->m_program->setUp( it->m_shape, viewer, light );
-	    ASSERT_GL;
+    ASSERT_GL;
             hg->getGeometry()->draw();
         }
-	ASSERT_GL;
+    ASSERT_GL;
     }
 }
 
@@ -80,7 +80,7 @@ RenderList::addRenderItem( Object* shape, ShaderProgram* program )
 }
 
 RenderList::RenderItem::RenderItem( Object* shape, ShaderProgram* program )
-  : m_shape( shape ),
-    m_program( program )
+: m_shape( shape ),
+  m_program( program )
 {
 }
