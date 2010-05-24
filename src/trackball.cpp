@@ -1,4 +1,5 @@
 #include "trackball.h"
+#include <cmath>
 
 using siut::simd::Vec3f;
 using siut::simd::Quatf;
@@ -40,8 +41,11 @@ void TrackBall::project_onto_surface(Vec3f &p)
 
 void TrackBall::compute_rotation()
 {
-    // Vec3f axis = normalize(cross(anchor, current));
-    // fleat angle = 
+    // Vec3f axis = cross(m_anchor, m_current);
+    // float angle = std::acos(dot(m_anchor, m_current));
+    // m_transform = Quatf(std::cos(angle/2),
+    // 			std::sin(angle/2)*axis);
+    // m_transform = normalize(m_transform);
     
     using std::sqrt;
     float anglestuff = sqrt(2 + 2*dot(m_anchor, m_current));

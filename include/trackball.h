@@ -8,10 +8,10 @@
 class TrackBall
 {
   public:
-    TrackBall()
-	: m_radius(1.f)
+    TrackBall(float radius = 3.f)
+	: m_radius(radius)
     {
-    }    
+    }
 
     void begin_drag(float const &x, float const &y);
     void drag(float const &x, float const &y);

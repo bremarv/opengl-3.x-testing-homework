@@ -269,7 +269,7 @@ GameManager::play()
 
     bool finished = false;
     bool mousebuttondown = false;
-    TrackBall trackball;
+    TrackBall trackball(WINDOW_SIZE_WIDTH / 2);
     Quatf original_orientation;
     
     
