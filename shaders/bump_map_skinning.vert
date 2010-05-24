@@ -40,8 +40,8 @@ void main()
     in_f_LightTexPosition = lsp;
     in_f_TexCoord = in_v_TexCoord;
     gl_Position = ModelViewProjection * position;
-    vec3 bitangent = cross(normalize(norm.xyz), normalize(in_v_Tangent.xyz)) * in_v_Tangent.w;
-    mat3 tnbmat = transpose(mat3(normalize(in_v_Tangent.xyz), normalize(bitangent), normalize(in_v_Normal)));
+    vec3 bitangent = cross(normalize(norm.xyz), normalize(tangent.xyz)) * in_v_Tangent.w;
+    mat3 tnbmat = transpose(mat3(normalize(tangent.xyz), normalize(bitangent), normalize(norm)));
     in_f_lookdir = tnbmat * (ObjSpaceCamPos - position.xyz);
     in_f_lightdir = tnbmat * (ObjSpaceLightPos - position.xyz);
 }
