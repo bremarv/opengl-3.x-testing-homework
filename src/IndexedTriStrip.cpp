@@ -273,7 +273,7 @@ void IndexedTriStrip::setupTNB()
     glBindBuffer( GL_ARRAY_BUFFER, m_TNBVbo);
     glBufferData(GL_ARRAY_BUFFER,
 		 sizeof(GLfloat) * 4 * m_count,
-		 &tangentdata[0],
+		 &tangentsave[0],
 		 GL_STATIC_DRAW);
 
     glEnableVertexAttribArray( TANGENT_ATTRIB_LOCATION );
