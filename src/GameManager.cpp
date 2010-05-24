@@ -312,7 +312,7 @@ GameManager::play()
 		if(mousebuttondown)
 		{
 		    trackball.drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
-				   -event.motion.y + WINDOW_SIZE_HEIGHT / 2);				   WINDOW_SIZE_HEIGHT);
+				   -event.motion.y + WINDOW_SIZE_HEIGHT / 2);
 		}
 		break;
             }
