@@ -57,6 +57,15 @@ public:
         m_orientation = orientation; m_transform_tainted = true;
     }
 
+    const siut::simd::Quatf& getOrientation()
+    {
+	return m_orientation;
+    }
+    
+    const siut::simd::Vec3f& getPosition()
+    {
+	return m_position;
+    }
 
     const siut::simd::Mat4f&
     getWorldFromObjectMatrix()

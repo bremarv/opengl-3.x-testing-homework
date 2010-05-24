@@ -21,6 +21,7 @@
 #include "IndexedTriStrip.h"
 #include "Snake.h"
 #include "constants.h"
+#include "trackball.h"
 
 #include "GlTools.h"
 using std::cerr;
@@ -208,22 +209,22 @@ GameManager::animateFrame()
                                  quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), static_cast<float>(0.1f*t)) );
 
     for(size_t i=0; i<m_boxes.size(); i++) {
-        float tt = static_cast<float>(t+(0.2*i));
-        m_boxes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.07f*tt ) *
-                                    quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
-                                    quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
-	m_boxes[i]->setLocalPosition( Vec3f( -0.5f, -0.5f, -0.5f ) );
-	m_boxes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
+    //     float tt = static_cast<float>(t+(0.2*i));
+    //     m_boxes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.07f*tt ) *
+    //                                 quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
+    //                                 quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
+    	m_boxes[i]->setLocalPosition( Vec3f( -0.5f, -0.5f, -0.5f ) );
+    	m_boxes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
-        float tt = static_cast<float>(t+(0.2*i+2));
-        m_snakes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.07f*tt ) *
-				     quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
-				     quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
-	m_snakes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
-	std::vector<siut::simd::Mat4f> &matrs=m_snakes[i]->getboneMatrices();
-	m_geo_snake->createBoneMatrices(0.5f, matrs);
+    //     float tt = static_cast<float>(t+(0.2*i+2));
+    //     m_snakes[i]->setOrientation( quatFromAxisAngleRotation( Vec3f(0.0f, 1.0f, 0.0f ), 0.07f*tt ) *
+    // 				     quatFromAxisAngleRotation( Vec3f(0.0f, 0.0f, 1.0f ), 0.1f*tt ) *
+    // 				     quatFromAxisAngleRotation( Vec3f(1.0f, 0.0f, 0.0f ), 0.15f*tt ) );
+    	m_snakes[i]->setPosition( Vec3f( 0.0f, 0.0f, 0.0f ) );
+    	std::vector<siut::simd::Mat4f> &matrs=m_snakes[i]->getboneMatrices();
+    	m_geo_snake->createBoneMatrices(0.5f, matrs);
     }
 
     // update bounding boxes
@@ -267,6 +268,11 @@ GameManager::play()
     ASSERT_GL;
 
     bool finished = false;
+    bool mousebuttondown = false;
+    TrackBall trackball;
+    Quatf original_orientation;
+    
+    
     while(!finished) {
 
         // poll for pending events
@@ -287,6 +293,28 @@ GameManager::play()
 	    case SDL_QUIT:
                 finished = true;
                 break;
+	    case SDL_MOUSEBUTTONDOWN:
+		if(event.button.button == SDL_BUTTON_LEFT)
+		{
+		    mousebuttondown = true;
+		    original_orientation = normalize(m_snakes[0]->getOrientation());
+		    trackball.begin_drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
+					 event.motion.y - WINDOW_SIZE_HEIGHT / 2);
+		}
+		break;
+	    case SDL_MOUSEBUTTONUP:
+		if(event.button.button == SDL_BUTTON_LEFT)
+		{
+		    mousebuttondown = false;
+		}
+		break;
+	    case SDL_MOUSEMOTION:
+		if(mousebuttondown)
+		{
+		    trackball.drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
+				   event.motion.y - WINDOW_SIZE_HEIGHT / 2);
+		}
+		break;
             }
         }
 
@@ -302,6 +330,20 @@ GameManager::play()
 		m_prev_fps_ticks = ticks;
 		m_frames = 0;
 	    }
+	}
+
+	if(mousebuttondown)
+	{
+	    m_snakes[0]->setOrientation(
+		original_orientation * trackball.getrotation()//  *
+		// Quatf(0, m_snakes[0]->getPosition()) *
+		// conjugate(original_orientation) *
+		// conjugate(trackball.getrotation())
+		);
+	    // static Quatf rt;
+	    // rt = trackball.getrotation();
+	    // for(int i=0;i<4;++i) std::cout<<rt[i]<<" ";
+	    // std::cout<<std::endl;
 	}
         animateFrame();
         renderFrame();
