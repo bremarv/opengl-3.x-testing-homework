@@ -299,7 +299,7 @@ GameManager::play()
 		    mousebuttondown = true;
 		    original_orientation = normalize(m_snakes[0]->getOrientation());
 		    trackball.begin_drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
-					 event.motion.y - WINDOW_SIZE_HEIGHT / 2);
+					 -event.motion.y + WINDOW_SIZE_HEIGHT / 2);
 		}
 		break;
 	    case SDL_MOUSEBUTTONUP:
@@ -312,7 +312,7 @@ GameManager::play()
 		if(mousebuttondown)
 		{
 		    trackball.drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
-				   event.motion.y - WINDOW_SIZE_HEIGHT / 2);
+				   -event.motion.y + WINDOW_SIZE_HEIGHT / 2);				   WINDOW_SIZE_HEIGHT);
 		}
 		break;
             }
