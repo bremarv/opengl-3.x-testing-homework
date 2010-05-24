@@ -27,10 +27,14 @@ void main()
 	vec4(in_v_Position, 1.0);
     vec4 norm = in_v_Weights[0] * boneMatrices[in_v_Bones.x] *
 	vec4(in_v_Normal, 0.0);
+    vec4 tangent = in_v_Weights[0] * boneMatrices[in_v_Bones.x] *
+	vec4(in_v_Tangent.xyz, 0.0);
     position = position + in_v_Weights[1] * boneMatrices[in_v_Bones.y] *
 	vec4(in_v_Position, 1.0);
     norm = norm + in_v_Weights[1] * boneMatrices[in_v_Bones.y] *
 	vec4(in_v_Normal, 0.0);
+    tangent = tangent + in_v_Weights[1] * boneMatrices[in_v_Bones.y] *
+	vec4(in_v_Tangent.xyz, 0.0);
     
     vec4 lsp = LightTexFromObjectMatrix * position;
     in_f_LightTexPosition = lsp;

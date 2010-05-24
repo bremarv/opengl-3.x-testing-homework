@@ -16,6 +16,7 @@
 
 #include "GameManager.h"
 #include "BumpShader.h"
+#include "BumpSkinningShader.h"
 #include "Cube.h"
 #include "IndexedTriStrip.h"
 #include "Snake.h"
@@ -109,11 +110,13 @@ GameManager::init()
     m_phong_shader = StandardShaderProgram::factory( StandardShaderProgram::PHONG_WITH_SHADOW );
     m_light_shader = StandardShaderProgram::factory( StandardShaderProgram::LIGHT_SHADER );
     m_shadowcast_shader = StandardShaderProgram::factory( StandardShaderProgram::SHADOW_CAST );
-    m_skinning_shader = SkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
     {
 	BumpShader *tex_shader = BumpShader::factory(StandardShaderProgram::PHONG_SHADER);
 	tex_shader->setBumpMapTexture(m_bump_tex);
 	m_textured_shader = tex_shader;
+	BumpSkinningShader *bs_shader = BumpSkinningShader::factory( StandardShaderProgram::PHONG_SHADER );
+	bs_shader->setBumpMapTexture(m_bump_tex);
+	m_skinning_shader = bs_shader;
     }
     ASSERT_GL;
 
@@ -163,7 +166,7 @@ GameManager::init()
     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
-	m_onscreen_pass.addRenderItem( m_snakes[i], m_textured_shader );
+	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
     }
 
 
