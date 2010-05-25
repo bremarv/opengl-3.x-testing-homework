@@ -151,6 +151,11 @@ GameManager::init()
 	m_snakes.push_back( s );
     }
 
+    if(m_snakes.size() > 0)
+    {
+	m_trackball_object = m_snakes[0];
+    }
+
     // Set up render passes
     //
     // We only include the outer box and the light in the onscreen pass (and not
@@ -163,12 +168,15 @@ GameManager::init()
 
     m_onscreen_pass.addRenderItem( m_light, m_light_shader );
     for(size_t i=0; i<m_boxes.size(); i++) {
-	// m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
+	m_onscreen_pass.addRenderItem( m_boxes[i],  m_textured_shader );
     }
 
     for(size_t i=0; i<m_snakes.size(); i++) {
 	m_onscreen_pass.addRenderItem( m_snakes[i], m_skinning_shader );
     }
+
+    // setting a big ball makes the trackball more comfortable to use
+    m_trackball.setballsize(WINDOW_SIZE_WIDTH / 2);
 
 
     // Set up shadow map FBO
@@ -227,6 +235,11 @@ GameManager::animateFrame()
     	m_geo_snake->createBoneMatrices(0.5f, matrs);
     }
 
+    if(m_trackball.isactive())
+    {
+	m_trackball_object->setOrientation(m_trackball.gettotalrotation());
+    }
+
     // update bounding boxes
     m_camera->setViewVolume( m_onscreen_pass.getViewerSpaceBoundingBox( m_camera->getObjectFromWorldMatrix() ) );
     m_light->setViewVolume( m_shadow_pass.getViewerSpaceBoundingBox( m_light->getObjectFromWorldMatrix() ) );
@@ -268,9 +281,6 @@ GameManager::play()
     ASSERT_GL;
 
     bool finished = false;
-    bool mousebuttondown = false;
-    TrackBall trackball(WINDOW_SIZE_WIDTH / 2);
-    Quatf original_orientation;
     
     
     while(!finished) {
@@ -288,6 +298,18 @@ GameManager::play()
 		case 'r':
 		    recomputeNormals();
 		    break;
+		case 's':
+		    if(m_trackball.isactive())
+			m_trackball.end_drag();
+		    if(m_snakes.size() > 0)
+			m_trackball_object = m_snakes[0];
+		    break;
+		case 'c':
+		    if(m_trackball.isactive())
+			m_trackball.end_drag();
+		    if(m_boxes.size() > 0)
+			m_trackball_object = m_boxes[0];
+		    break;
                 }
                 break;
 	    case SDL_QUIT:
@@ -296,22 +318,21 @@ GameManager::play()
 	    case SDL_MOUSEBUTTONDOWN:
 		if(event.button.button == SDL_BUTTON_LEFT)
 		{
-		    mousebuttondown = true;
-		    original_orientation = normalize(m_snakes[0]->getOrientation());
-		    trackball.begin_drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
-					 -event.motion.y + WINDOW_SIZE_HEIGHT / 2);
+		    m_trackball.begin_drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
+					   -event.motion.y + WINDOW_SIZE_HEIGHT / 2,
+					   normalize(m_trackball_object->getOrientation()));
 		}
 		break;
 	    case SDL_MOUSEBUTTONUP:
 		if(event.button.button == SDL_BUTTON_LEFT)
 		{
-		    mousebuttondown = false;
+		    m_trackball.end_drag();
 		}
 		break;
 	    case SDL_MOUSEMOTION:
-		if(mousebuttondown)
+		if(m_trackball.isactive())
 		{
-		    trackball.drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
+		    m_trackball.drag(event.motion.x - WINDOW_SIZE_WIDTH / 2,
 				   -event.motion.y + WINDOW_SIZE_HEIGHT / 2);
 		}
 		break;
@@ -332,19 +353,7 @@ GameManager::play()
 	    }
 	}
 
-	if(mousebuttondown)
-	{
-	    m_snakes[0]->setOrientation(
-		original_orientation * trackball.getrotation()//  *
-		// Quatf(0, m_snakes[0]->getPosition()) *
-		// conjugate(original_orientation) *
-		// conjugate(trackball.getrotation())
-		);
-	    // static Quatf rt;
-	    // rt = trackball.getrotation();
-	    // for(int i=0;i<4;++i) std::cout<<rt[i]<<" ";
-	    // std::cout<<std::endl;
-	}
+
         animateFrame();
         renderFrame();
         SDL_GL_SwapBuffers();

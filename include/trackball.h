@@ -13,17 +13,26 @@ class TrackBall
     {
     }
 
-    void begin_drag(float const &x, float const &y);
+    void begin_drag(float const &x, float const &y,
+		    siut::simd::Quatf const &current_rotation);
     void drag(float const &x, float const &y);
-    const siut::simd::Quatf& getrotation() {return m_transform; }
+    void end_drag();
+    const siut::simd::Quatf& getrotation();
+    const siut::simd::Quatf& getoriginalrotation();
+    siut::simd::Quatf gettotalrotation();
+    void setballsize(float radius);
+    const bool& isactive();
   protected:
     void project_onto_surface(siut::simd::Vec3f &p);
     void compute_rotation();
     
     siut::simd::Vec3f m_anchor;
     siut::simd::Vec3f m_current;
-    siut::simd::Quatf m_transform;
+    siut::simd::Quatf m_rotation;
+    siut::simd::Quatf m_original_rotation;
     float m_radius;
+    bool m_active;
+    
 };
 
 #endif
